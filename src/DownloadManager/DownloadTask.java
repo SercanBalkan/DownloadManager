@@ -5,7 +5,7 @@ import java.net.*;
 import java.util.*;
 
 //This class downloads a file from a URL
-class Download extends Observable implements Runnable {
+class DownloadTask extends Observable implements Runnable {
 	// Max size of the download buffer
 	private static final int MAX_BUFFER_SIZE = 1024;
 
@@ -19,19 +19,19 @@ class Download extends Observable implements Runnable {
 	public static final int CANCELLED = 3;
 	public static final int ERROR = 4;
 
-	private URL url; // Download URL
+	private URL url; // DownloadTask URL
 	private int size; // Size of the downloads in bytes
 	private int downloaded; // number of bytes downloaded
 	private int status; // Current status of download
 
 	// Constructor for download
-	public Download(URL url) {
+	public DownloadTask(URL url) {
 		this.url = url;
 		size = -1;
 		downloaded = 0;
 		status = DOWNLOADING;
 
-		// Begin the Download
+		// Begin the DownloadTask
 		download();
 	}
 
@@ -92,7 +92,7 @@ class Download extends Observable implements Runnable {
 		return fileName.substring(fileName.lastIndexOf('/') + 1);
 	}
 
-	// Download file.
+	// DownloadTask file.
 	public void run() {
 		RandomAccessFile file = null;
 		InputStream stream = null;

@@ -13,25 +13,25 @@ public class DownloadsTableModel extends AbstractTableModel implements Observer 
 	private static final Class[] columnClasses = { String.class, String.class, JProgressBar.class, String.class };
 
 	// the table's list of downloads
-	private ArrayList<Download> downloadList = new ArrayList<Download>();
+	private ArrayList<DownloadTask> downloadList = new ArrayList<DownloadTask>();
 
 	// add a new download to the table
-	public void addDownload(Download download) {
+	public void addDownload(DownloadTask downloadTask) {
 		// register to be notified when the download changes.
-		download.addObserver(this);
-		downloadList.add(download);
+		downloadTask.addObserver(this);
+		downloadList.add(downloadTask);
 
 		// fire table roe insertion notification to table
 		fireTableRowsInserted(getRowCount() - 1, getRowCount() - 1);
 	}
 
 	// get a download for a specific row
-	public Download getDownload(int row) {
+	public DownloadTask getDownloadTask(int row) {
 		return downloadList.get(row);
 	}
 
 	// remove a download from the list
-	public void clearDownload(int row) {
+	public void clearDownloadTask(int row) {
 		downloadList.remove(row);
 
 		// fire table row deletion notification to table
@@ -60,17 +60,17 @@ public class DownloadsTableModel extends AbstractTableModel implements Observer 
 
 	// get value for a specific row and column combination
 	public Object getValueAt(int row, int col) {
-		Download download = downloadList.get(row);
+		DownloadTask downloadTask = downloadList.get(row);
 		switch (col) {
 		case 0: // URL
-			return download.getUrl();
+			return downloadTask.getUrl();
 		case 1: // size
-			int size = download.getSize();
+			int size = downloadTask.getSize();
 			return (size == -1) ? "" : Integer.toString(size);
 		case 2: // progress
-			return new Float(download.getProgress());
+			return new Float(downloadTask.getProgress());
 		case 3: // status
-			return Download.STATUSES[download.getStatus()];
+			return DownloadTask.STATUSES[downloadTask.getStatus()];
 		}
 		return "";
 	}

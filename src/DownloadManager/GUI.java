@@ -8,7 +8,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 //the download manager
-public class DownloadManager extends JFrame implements Observer {
+public class GUI extends JFrame implements Observer {
 
 	// add download text field
 	private JTextField addTextField;
@@ -24,15 +24,15 @@ public class DownloadManager extends JFrame implements Observer {
 	private JButton cancelButton, clearButton;
 
 	// currently selected download
-	private Download selectedDownload;
+	private DownloadTask selectedDownload;
 
 	// flag for whether or not table selection is being cleared
 	private boolean clearing;
 
 	// constructor for download manager
-	public DownloadManager() {
+	public GUI() {
 		// set application title
-		setTitle("Download Manager - JATIN");
+		setTitle("Download Manager");
 
 		// set window size
 		setSize(640, 480);
@@ -152,7 +152,7 @@ public class DownloadManager extends JFrame implements Observer {
 	private void actionAdd() {
 		URL verifiedUrl = verifyUrl(addTextField.getText());
 		if (verifiedUrl != null) {
-			tableModel.addDownload(new Download(verifiedUrl));
+			tableModel.addDownload(new DownloadTask(verifiedUrl));
 			addTextField.setText(""); // reset add text field
 		} else {
 			JOptionPane.showMessageDialog(this, "Invalid download URL", "Error", JOptionPane.ERROR_MESSAGE);
@@ -185,15 +185,15 @@ public class DownloadManager extends JFrame implements Observer {
 		// unregister from receiving notifications from the last selected
 		// download
 		if (selectedDownload != null)
-			selectedDownload.deleteObserver(DownloadManager.this);
+			selectedDownload.deleteObserver(GUI.this);
 
 		/*
 		 * if not in the middle of clearing a download, set the selected
 		 * download and register to receive notification from it
 		 */
 		if (!clearing && table.getSelectedRow() > -1) {
-			selectedDownload = tableModel.getDownload(table.getSelectedRow());
-			selectedDownload.addObserver(DownloadManager.this);
+			selectedDownload = tableModel.getDownloadTask(table.getSelectedRow());
+			selectedDownload.addObserver(GUI.this);
 			updateButtons();
 		}
 	}
@@ -219,7 +219,7 @@ public class DownloadManager extends JFrame implements Observer {
 	// clear the selected download
 	private void actionClear() {
 		clearing = true;
-		tableModel.clearDownload(table.getSelectedRow());
+		tableModel.clearDownloadTask(table.getSelectedRow());
 		clearing = false;
 		selectedDownload = null;
 		updateButtons();
@@ -233,19 +233,19 @@ public class DownloadManager extends JFrame implements Observer {
 		if (selectedDownload != null) {
 			int status = selectedDownload.getStatus();
 			switch (status) {
-			case Download.DOWNLOADING:
+			case DownloadTask.DOWNLOADING:
 				pauseButton.setEnabled(true);
 				resumeButton.setEnabled(false);
 				cancelButton.setEnabled(true);
 				clearButton.setEnabled(false);
 				break;
-			case Download.PAUSED:
+			case DownloadTask.PAUSED:
 				pauseButton.setEnabled(false);
 				resumeButton.setEnabled(true);
 				cancelButton.setEnabled(true);
 				clearButton.setEnabled(false);
 				break;
-			case Download.ERROR:
+			case DownloadTask.ERROR:
 				pauseButton.setEnabled(false);
 				resumeButton.setEnabled(true);
 				cancelButton.setEnabled(false);
@@ -267,7 +267,7 @@ public class DownloadManager extends JFrame implements Observer {
 		}
 	}
 
-	// update is called when a Download notifies its observer of any change.
+	// update is called when a DownloadTask notifies its observer of any change.
 	public void update(Observable o, Object arg) {
 		// update buttons if the selected download has changed.
 		if (selectedDownload != null && selectedDownload.equals(o))
@@ -282,7 +282,7 @@ public class DownloadManager extends JFrame implements Observer {
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				DownloadManager manager = new DownloadManager();
+				GUI manager = new GUI();
 				manager.setVisible(true);
 			}
 		});
